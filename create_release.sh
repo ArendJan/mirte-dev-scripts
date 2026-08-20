@@ -2,6 +2,9 @@
 
 # create release of all the specified packages in repos.yaml and publish a release to sd-image tools with all the changelogs
 
+# IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# RUN ./update_pkg_versions.sh first to update the versions in the packages before creating a release!
+# then wait for the workflows to finish, then run this script to create the release and publish the changelogs to sd-image tools
 
 set -ex
 set -o pipefail
@@ -57,15 +60,7 @@ for package in $packages; do
     notes=$(gh release --repo "$package" view "$release_name" --json body -q .body)
     all_notes+="## Release notes for $(basename "$package")\n\n"
     all_notes+="$notes\n\n"
-    sleep 5
-
-    # if contains mirte-ros-packages, start update command
-    if [[ "$package" == *"mirte-ros-packages"* ]]; then
-        echo "Updating mirte-ros-packages"
-        # update the version in mirte-ros-packages to the new release
-        gh workflow run "Update Package Version" -R $package -r $branch -F version="$release_name" || true
-    fi
-
+    sleep 5    
 done
 
 known_issues_file="$SCRIPT_DIR/known_issues.md"
