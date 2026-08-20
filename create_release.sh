@@ -40,6 +40,7 @@ fi
 packages=$(yq e '.repositories[].url' "$repos_file")
 branches=$(yq e '.repositories[].version' "$repos_file")
 
+
 if [ "$skip_packages" = true ]; then
     echo "Skipping packages, only creating release in sd-image tools"
     packages=""
@@ -57,6 +58,14 @@ for package in $packages; do
     all_notes+="## Release notes for $(basename "$package")\n\n"
     all_notes+="$notes\n\n"
     sleep 5
+
+    # if contains mirte-ros-packages, start update command
+    if [[ "$package" == *"mirte-ros-packages"* ]]; then
+        echo "Updating mirte-ros-packages"
+        # update the version in mirte-ros-packages to the new release
+        gh workflow run "Update Package Version" -R $package -r $branch -F version="$release_name" || true
+    fi
+
 done
 
 known_issues_file="$SCRIPT_DIR/known_issues.md"
