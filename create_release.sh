@@ -10,13 +10,16 @@ SCRIPT_DIR=$(dirname "$0")
 SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
 
 release_name="0.2.1" # dont add v to the release name!
-latest=false
-release_candidate=true
+latest=true
+release_candidate=false
+release_candidate_number=2
 sd_image_owner="mirte-robot"
 
+skip_packages=false
+skip_sd_image_tools=false
 
 if [ "$release_candidate" = true ]; then
-    release_name="${release_name}-rc"
+    release_name="${release_name}-rc${release_candidate_number}"
 fi
 
 # if latest and rc, error
@@ -37,6 +40,11 @@ fi
 packages=$(yq e '.repositories[].url' "$repos_file")
 branches=$(yq e '.repositories[].version' "$repos_file")
 
+if [ "$skip_packages" = true ]; then
+    echo "Skipping packages, only creating release in sd-image tools"
+    packages=""
+    branches=""
+fi
 all_notes=""
 
 i=1
@@ -50,7 +58,6 @@ for package in $packages; do
     all_notes+="$notes\n\n"
     sleep 5
 done
-# exit 0
 
 known_issues_file="$SCRIPT_DIR/known_issues.md"
 known_issues=""
@@ -61,11 +68,18 @@ fi
 # add download link to the top of the notes
 all_notes="### [Download the latest sd-image](https://surfdrive.surf.nl/s/193nJP6OkYzHds0?dir=$release_name)\n\n$known_issues\n\n$all_notes"
 
-# write all notes to a file
-echo -e "$all_notes" > "$SCRIPT_DIR/all_release_notes.md"
+if [ "$skip_packages" != true ]; then
+    # write all notes to a file
+    echo -e "$all_notes" > "$SCRIPT_DIR/all_release_notes.md"
+fi
 
 # create a release in sd-image tools with all the changelogs
 sd_image_repo="https://github.com/${sd_image_owner}/mirte-sd-image-tools.git"
 release_branch="main"
 
-gh release --repo "$sd_image_repo" create "$release_name" --target "$release_branch" --title "$release_name" --notes-file "$SCRIPT_DIR/all_release_notes.md" --prerelease="$release_candidate" --latest="$latest"  || true
+if [ "$skip_sd_image_tools" = true ]; then
+    echo "Skipping sd-image tools release"
+    exit 0
+else
+    gh release --repo "$sd_image_repo" create "$release_name" --target "$release_branch" --title "$release_name" --notes-file "$SCRIPT_DIR/all_release_notes.md" --prerelease="$release_candidate" --latest="$latest"  || true
+fi
