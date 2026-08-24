@@ -12,6 +12,8 @@ set -o pipefail
 SCRIPT_DIR=$(dirname "$0")
 SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
 
+# SETTINGS:
+# edit repos.yaml to add/remove repos
 release_name="0.2.1" # dont add v to the release name!
 latest=true
 release_candidate=false
@@ -20,6 +22,9 @@ sd_image_owner="mirte-robot"
 
 skip_packages=false
 skip_sd_image_tools=false
+dry_run=false
+
+#END SETTINGS
 
 if [ "$release_candidate" = true ]; then
     release_name="${release_name}-rc${release_candidate_number}"
@@ -56,8 +61,8 @@ for package in $packages; do
     branch=$(echo "$branches" | sed -n "${i}p")
     i=$((i + 1))
     echo "Processing $package on branch $branch"
-    gh release --repo "$package" create "$release_name" --target "$branch" --title "$release_name" --generate-notes --prerelease="$release_candidate" --latest="$latest" || true
-    notes=$(gh release --repo "$package" view "$release_name" --json body -q .body)
+    $dry_run || gh release --repo "$package" create "$release_name" --target "$branch" --title "$release_name" --generate-notes --prerelease="$release_candidate" --latest="$latest" || true
+    $dry_run || notes=$(gh release --repo "$package" view "$release_name" --json body -q .body)
     all_notes+="## Release notes for $(basename "$package")\n\n"
     all_notes+="$notes\n\n"
     sleep 5    
@@ -85,5 +90,5 @@ if [ "$skip_sd_image_tools" = true ]; then
     echo "Skipping sd-image tools release"
     exit 0
 else
-    gh release --repo "$sd_image_repo" create "$release_name" --target "$release_branch" --title "$release_name" --notes-file "$SCRIPT_DIR/all_release_notes.md" --prerelease="$release_candidate" --latest="$latest"  || true
+    $dry_run || gh release --repo "$sd_image_repo" create "$release_name" --target "$release_branch" --title "$release_name" --notes-file "$SCRIPT_DIR/all_release_notes.md" --prerelease="$release_candidate" --latest="$latest"  || true
 fi

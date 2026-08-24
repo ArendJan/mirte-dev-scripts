@@ -15,9 +15,6 @@ release_candidate=false
 release_candidate_number=2
 sd_image_owner="mirte-robot"
 
-skip_packages=false
-skip_sd_image_tools=false
-
 if [ "$release_candidate" = true ]; then
     release_name="${release_name}-rc${release_candidate_number}"
 fi
@@ -46,17 +43,15 @@ for package in $packages; do
     branch=$(echo "$branches" | sed -n "${i}p")
     i=$((i + 1))
     echo "Processing $package on branch $branch"
-    # if contains mirte-ros-packages, start update command
-    if [[ "$package" == *"mirte-ros-packages"* ]]; then
-        echo "Updating mirte-ros-packages"
-        # update the version in mirte-ros-packages to the new release
-        gh workflow run "Update Package Version" -R $package -r $branch -F version="$release_name" || true
+
+    # use gh workflow list to check if the workflow exists
+    workflow_exists=$(gh workflow list -R $package | grep "Update Package Version" || true)
+    if [ -z "$workflow_exists" ]; then
+        # echo "Workflow 'Update Package Version' does not exist in $package on branch $branch"
+        continue
     fi
-    if [[ "$package" == *"mirte-gazebo"* ]]; then
-        echo "Updating mirte-gazebo"
-        # update the version in mirte-gazebo to the new release
-        gh workflow run "Update Package Version" -R $package -r $branch -F version="$release_name" || true
-    fi
+    echo "Workflow 'Update Package Version' exists in $package on branch $branch"
+    gh workflow run "Update Package Version" -R $package -r $branch -F version="$release_name" || true
     
 done
 
