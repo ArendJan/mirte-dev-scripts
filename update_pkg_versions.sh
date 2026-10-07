@@ -9,21 +9,9 @@ set -o pipefail
 SCRIPT_DIR=$(dirname "$0")
 SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
 
-release_name="0.2.1" # dont add v to the release name!
+release_name="0.2.1" # dont add v to the release name, ros only likes 'semver' numbers, no rcX!
 latest=true
-release_candidate=false
-release_candidate_number=2
 sd_image_owner="mirte-robot"
-
-if [ "$release_candidate" = true ]; then
-    release_name="${release_name}-rc${release_candidate_number}"
-fi
-
-# if latest and rc, error
-if [ "$latest" = true ] && [ "$release_candidate" = true ]; then
-    echo "Cannot be both latest and release candidate"
-    exit 1
-fi
 
 # read repos.yaml and get the list of packages
 repos_file="$SCRIPT_DIR/repos_dev.yaml"

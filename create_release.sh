@@ -75,7 +75,7 @@ if [ -f "$known_issues_file" ]; then
 fi
 
 # add download link to the top of the notes
-all_notes="### [Download the latest sd-image](https://surfdrive.surf.nl/s/193nJP6OkYzHds0?dir=$release_name)\n\n$known_issues\n\n$all_notes"
+all_notes="### [Download the latest sd-image](https://buildmirte.me.tudelft.nl/$release_name)\n\n$known_issues\n\n$all_notes"
 
 if [ "$skip_packages" != true ]; then
     # write all notes to a file
