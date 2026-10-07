@@ -17,6 +17,9 @@ The sd-image-tools workflows will also add the repos to the release and add the 
 
 After some time the release will be on the [buildmirte.me.tudelft.nl/)](https://buildmirte.me.tudelft.nl/) server.
 
+You need to have [GitHub CLI](https://cli.github.com/) installed and logged in (`gh auth login`) for the scripts to work.
+
+
 ## Rest of the scripts
 
-Should be self-explenatory, just some helpful scripts.
+Should be self-explenatory, some are for previous robot versions.
