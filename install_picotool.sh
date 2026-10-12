@@ -1,3 +1,5 @@
+#!/bin/bash
+# self build picotoo, better to get the release binary.
 git clone https://github.com/raspberrypi/picotool.git --single-branch --depth=1 # shallow clone to save space
 cd picotool || exit 1
 sudo cp udev/*.rules /etc/udev/rules.d/

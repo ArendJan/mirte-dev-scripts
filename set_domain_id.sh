@@ -1,4 +1,6 @@
 #!/bin/bash
+# script to set the ROS_DOMAIN_ID based on the MAC address of the wifi interface (wlan0) on mirte master.
+# macs mapping is old numbering and possible old mac adresses.
 
 # set -xe
 wifi="wlan0"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# script for robohouse laptops to install ros2 humble and vscode
+
 set -xe
 sudo nmcli d wifi connect smartfridge password kaasblokje
 sudo apt update

@@ -1,5 +1,8 @@
 #!/bin/bash
 set -xe
+
+# Old script for mirte master
+
 echo "Starting networking fix script"
 sudo systemctl stop mirte-shutdown
 sudo systemctl stop mirte-ros

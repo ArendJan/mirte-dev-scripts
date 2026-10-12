@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Update pkg versions.
-
+# triggers the github workflow "Update Package Version" for all packages in repos.yaml
 
 set -ex
 set -o pipefail

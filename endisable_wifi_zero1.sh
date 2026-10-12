@@ -2,6 +2,7 @@
 set -xe
 ROOT_DIR=/media/arendjan/armbi_root/
 
+# En/disable wifi when sd-card is inserted and mounted to $ROOT_DIR
 
 # disable wifi on zero1
 if true; then

@@ -1,5 +1,8 @@
 #!/bin/bash
 set -xe
+
+# old fix script to update wifi-connect to fix issues with zerotier.
+
 # create tmp directory
 tmp_dir=$(mktemp -d)
 
